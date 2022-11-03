@@ -1,4 +1,3 @@
-from cgitb import reset
 import pandas as pd
 import sys
 import requests
