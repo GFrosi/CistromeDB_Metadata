@@ -14,6 +14,7 @@ import json
 import os
 import argparse
 from bs4 import BeautifulSoup
+from humanchip import filter_human_chipseq as fhc
 
 
 mkpath(os.getcwd() + "/logs/")
@@ -161,9 +162,8 @@ def create_df(dict_master): #working
     the index ang the keys of
     the dict values are the rows"""
     
-    df = pd.DataFrame.from_dict(dict_master,orient='index')
+    return pd.DataFrame.from_dict(dict_master,orient='index')
     
-    return df
 
   
 def main():
@@ -174,9 +174,21 @@ def main():
     logger.info("Requestes finished. Creating dataframe...")
     print("Requestes finished. Creating dataframe...")
     df = create_df(dict_master) #beautiful!
-    df.to_csv(args.output)
+    df.to_csv(args.output, index=False)
     logger.info("Dataframe saved!")
     print("Dataframe saved!")
+    
+    #filter human samples
+    df_human = fhc.filter_human(df)
+    df_human.to_csv('Cistrome_filter_human.csv', index=False)
+    logger.info("Human Dataframe saved!")
+    print("Human Dataframe saved!")
+
+    #filter human_nonencode_samples
+    df_human_noenc = fhc.filter_human_noENC(df_human)
+    df_human_noenc.to_csv('Cistrome_filter_human_noENC.csv', index=False)
+    logger.info("Human no ENCODE Dataframe saved!")
+    print("Human no ENCODE Dataframe saved!")    
 
 
     # if args.concat:
